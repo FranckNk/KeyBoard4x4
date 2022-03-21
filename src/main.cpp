@@ -8,6 +8,8 @@
 || #
 */
 #include <Keypad.h>
+#include "WIFIConnector_MKR1000.h"
+#include "MQTTConnector.h"
 
 // Configuration du clavier matriciel 4x4.
 
@@ -59,6 +61,10 @@ void ConfigureeLED();
 
 void setup(){
 		Serial.begin(9600);
+		// Initialisation du WiFi et du broquer MQTT.
+		wifiConnect();
+		MQTTConnect();
+
 		pinMode(LED_A, OUTPUT);              // Sets the digital pin as output.
 		pinMode(LED_B, OUTPUT);              // Sets the digital pin as output.
 		pinMode(LED_C, OUTPUT);              // Sets the digital pin as output.
@@ -73,8 +79,8 @@ void loop(){
 
 		if (keys) {
 			Serial.println(keys);
-		Serial.print("La valeur du mode est : ");
-		Serial.println(Situation);
+			Serial.print("La valeur du mode est : ");
+			Serial.println(Situation);
 		}
 		
 		if (keys && Situation == SELECTION_LED && keys >= 'A' && keys <= 'D'){
@@ -108,13 +114,13 @@ void loop(){
 void keypadEvent(KeypadEvent key){
 		switch (keypad.getState()){
 		case PRESSED:
-				// Vérifions le bouton préssé afin de préciser la LED choisie et son intensité.
+			// Vérifions le bouton préssé afin de préciser la LED choisie et son intensité.
 
-				break;
+			break;
 
 		case RELEASED:
 				
-				break;
+			break;
 
 		case HOLD:	
 				if (key == '0' && Situation == TERMINE)
@@ -132,7 +138,10 @@ void keypadEvent(KeypadEvent key){
 				}
 				if (key == '*' && Situation == SELECTION_INTENSITE) {
 						Situation = TERMINE; 		// On passe à l'état Terminé pour régler la LED.
-
+					// On peut maintenant envoyer les informations sur T.B.
+					appendPayload("LED", (1 + IndexLEDUtilise));
+					appendPayload("Intensite", MesLED[IndexLEDUtilise].Intensite);
+					sendPayload();
 				}
 				break;
 		}
