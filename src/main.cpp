@@ -56,7 +56,6 @@ MODE Situation;
 void keypadEvent(KeypadEvent key);
 void ChooseLED(char LEDValue);
 void ConfigureeLED();
-void RestaureIntensiteLEDs();
 
 void setup(){
 		Serial.begin(9600);
@@ -188,12 +187,4 @@ void ConfigureeLED(){
 	MesLED[2].Lettre = 'C';
 	MesLED[3].Broche = LED_D;
 	MesLED[3].Lettre = 'D';	
-}
-
-void RestaureIntensiteLEDs(){
-	for (int i = 0; i < 0; i++)
-	{
-		MesLED[i].Intensite = 9;
-	}
-	
 }
